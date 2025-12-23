@@ -21,7 +21,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // ===================== CONFIG CAMERA =====================
-const RTSP_URL = "rtsp://admin:thang05112004@192.168.100.4:554/ch1/sub"; 
+const RTSP_URL = "rtsp://admin:thang05112004@192.168.100.6:554/ch1/sub"; 
 const HLS_OUTPUT_DIR = path.join(__dirname, "hls", "cam1");
 
 // ===================== EXPRESS APP =====================

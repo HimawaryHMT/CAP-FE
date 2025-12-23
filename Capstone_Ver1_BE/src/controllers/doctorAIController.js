@@ -243,3 +243,4 @@ export const getCommonConditions = async (req, res) => {
 
 
 
+

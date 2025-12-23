@@ -16,8 +16,8 @@ const ThemBanGhi = async (req, res) => {
     }
 
     if (isNaN(weight) || isNaN(height)) {
-  return res.status(400).json({ message: "Dữ liệu phải là số" });
-}
+      return res.status(400).json({ message: "Dữ liệu phải là số" });
+    }
 
     // ✅ Lấy elderly_id từ bảng elderly_users
     const [elderlyRows] = await db.query(
@@ -64,11 +64,11 @@ const ThemBanGhi = async (req, res) => {
       [newId, elderly_id, weight, heightDaDoi, bmiValue]
     );
 
-    console.log("✅ Insert thành công:", { newId, elderly_id, weight, heightDaDoi, bmi : bmiValue });
+    console.log("✅ Insert thành công:", { newId, elderly_id, weight, heightDaDoi, bmi: bmiValue });
 
 
     // Trả về cho client
-     return res.status(201).json({
+    return res.status(201).json({
       message: "Thêm bản ghi thành công",
       data: {
         cnvb_id: newId,
@@ -97,12 +97,14 @@ const getAll_BMI = async (req, res) => {
 
     // Lấy dữ liệu BMI theo elderly_id của user
     const [rows] = await db.query(`
-      SELECT cvb.bmi,
-       DATE_FORMAT(cvb.created_at, '%b') AS month
+      SELECT 
+  cvb.bmi,
+  DATE_FORMAT(cvb.created_at, '%d/%m') AS label,
+  cvb.created_at
 FROM cannangvabmis cvb
 JOIN elderly_users eu ON cvb.elderly_id = eu.elderly_id
 WHERE eu.user_id = ?
-ORDER BY cvb.created_at ASC
+ORDER BY cvb.created_at DESC
 LIMIT 5
     ` , [userId]
     );
@@ -114,7 +116,7 @@ LIMIT 5
 
     // Lấy danh sách BMI
     const values = rows.map(row => parseFloat(row.bmi));
-    const labels = rows.map(row => row.month);
+    const labels = rows.map(row => row.label);
 
     // Tính toán thống kê
     const max = Math.max(...values);
@@ -139,19 +141,20 @@ const getAll_CanNang = async (req, res) => {
   try {
     // ✅ Lấy user_id từ token
     const userId = req.user.user_id;
-
     if (!userId) {
       return res.status(400).json({ message: "Thiếu user_id trong token" });
     }
 
     // Lấy dữ liệu Cân nặng theo elderly_id của user
     const [rows] = await db.query(`
-      SELECT cvb.cannang,
-       DATE_FORMAT(cvb.created_at, '%b') AS month
+      SELECT 
+  cvb.cannang,
+  DATE_FORMAT(cvb.created_at, '%d/%m') AS label,
+  cvb.created_at
 FROM cannangvabmis cvb
 JOIN elderly_users eu ON cvb.elderly_id = eu.elderly_id
 WHERE eu.user_id = ?
-ORDER BY cvb.created_at ASC
+ORDER BY cvb.created_at DESC
 LIMIT 5
     ` , [userId]
     );
@@ -162,7 +165,7 @@ LIMIT 5
 
     // Lấy danh sách BMI
     const values = rows.map(row => parseFloat(row.cannang));
-    const labels = rows.map(row => row.month);
+    const labels = rows.map(row => row.label);
 
     // Tính toán thống kê
     const max = Math.max(...values);
@@ -187,7 +190,6 @@ LIMIT 5
 const getDetail_CN_BMI = async (req, res) => {
   try {
     const userId = req.user.user_id;
-
     if (!userId) {
       return res.status(400).json({ message: "Thiếu user_id trong token" });
     }
@@ -229,4 +231,4 @@ const getDetail_CN_BMI = async (req, res) => {
 };
 
 
-export { ThemBanGhi, getAll_BMI, getAll_CanNang , getDetail_CN_BMI};
+export { ThemBanGhi, getAll_BMI, getAll_CanNang, getDetail_CN_BMI };
