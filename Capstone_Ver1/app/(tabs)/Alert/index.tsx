@@ -18,7 +18,6 @@ import { getFallEvents } from "@/services/fallEventApi";
 
 // ==================== MAIN SCREEN ====================
 export default function FallAlertScreen() {
-
   type LatestAlert = {
     time: string;
     urlVideo: string;
